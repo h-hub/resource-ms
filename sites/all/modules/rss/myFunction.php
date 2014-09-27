@@ -8,7 +8,7 @@
 		function drupalData($sql, $dataBase){
 			//echo 'sql : '.$sql.'<br>';
 			//database server ip, username, password
-			$con = mysql_connect("127.0.0.1", "root", "");
+			$con = mysql_connect("172.31.28.89", "root", "ntzldsoh");
 			if(!$con){
 				die('Could not connect : '. mysql_error());
 			}
