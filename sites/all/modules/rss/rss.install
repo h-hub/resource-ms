@@ -1,0 +1,267 @@
+<?php
+	//database connection
+	//include 'db_con.php';
+	/**
+	* Install the rss4ucsc module, including it's content (node)
+	* type.
+	* @file
+	*/
+	/**
+	* Implementation of hook_install()
+	*/
+	function rss_install() {
+		//rssDB('external');
+		//rssDB('internal');
+	}
+	/**
+	* Implementation of hook_uninstall()
+	*/
+	function rss_uninstall() {
+		//drupal_uninstall_schema('rss');
+	}
+
+	/**
+	* Implementation of hook_schema()
+	* @return array of Schema API table definitions.
+	*/
+	function rssDB($type) {
+		switch($type){
+			case 'internal':{
+							$schema['event'] = array(
+							'fields' => array(
+								'event_id' => array(
+									'type' => 'serial', 
+									'size' => 'big', 
+									'unsigned' => TRUE, 
+									'not null' => TRUE,
+									'description'=> "Event ID"
+									),
+								'user_id' => array(
+									'type' => 'serial', 
+									'size' => 'big', 
+									'unsigned' => TRUE, 
+									'not null' => TRUE,
+									'description'=> "User ID"
+									),
+								'event_name' => array(
+									'type' => 'char',
+									//'size' => 'normal',
+									'not null' => TRUE,
+									'length' => '200',
+									'description' => "Event Name"
+								),
+								'ex_user_id' => array(
+									'type' => 'serial', 
+									'size' => 'big', 
+									'unsigned' => TRUE, 
+									'not null' => FALSE,
+									'description'=> "Externael User ID"
+									),
+								'start_date' =>array(
+									'type' => 'char',
+									//'size' => 'normal',
+									'not null' => TRUE,
+									'length' => '20',
+									'description' => "Event Start Date"
+								),
+								'end_date' =>array(
+									'type' => 'char',
+									//'size' => 'normal',
+									'not null' => TRUE,
+									'length' => '20',
+									'description' => "Event End Date"
+								),
+								'start_time' =>array(
+									'type' => 'char',
+									//'size' => 'normal',
+									'not null' => TRUE,
+									'length' => '20',
+									'description' => "Event Start Time"
+								),
+								'end_time' =>array(
+									'type' => 'char',
+									//'size' => 'normal',
+									'not null' => TRUE,
+									'length' => '20',
+									'description' => "Event End Time"
+								),
+								'timestamp' => array(
+									'type' => 'int', 
+									'not null' => TRUE, 
+									'default' => 0,
+									'description'=> "Timestamp (Unix Timestamp, which is limited to values above Jan 1, 1970)"
+								),
+								'note' => array(
+									'type' => 'text', 
+									'not null' => FALSE,
+									'description'=> "Event Discription."
+								),  //NOTE:  On MySQL, text fields cannot have default values.
+							),
+						'foreign keys' => array(
+							'users' => array(
+								'table' => 'users',
+								'columns' => array('user_id' => 'uid'),
+							),
+							'ex_users' => array(
+								'table' => 'external_user',
+								'columns' => array('ex_user_id' => 'ex_user_id'),
+							)
+						),			
+						'primary key' => array('event_id') //Don't put a comma after primary key definition, since doing so will cause database errors.
+					);
+					$schema['resource'] = array(
+						'fields' => array(
+							'resource_id' => array(
+								'type' => 'serial', 
+								'size' => 'big', 
+								'unsigned' => TRUE, 
+								'not null' => TRUE,
+								'description'=> "Resource ID"
+							),
+							'resource_name' => array(
+								'type' => 'char',
+								//'size' => 'normal',
+								'not null' => TRUE,
+								'length' => '200',
+								'description' => "Resource Name"
+							),
+							'resource_type' => array(
+								'type' => 'int', 
+								'size' => 'normal', 
+								'unsigned' => TRUE, 
+								'not null' => TRUE,
+								'description'=> "Resource access level"
+							),
+							'capacity' => array(
+								'type' => 'serial', 
+								'size' => 'normal', 
+								'unsigned' => TRUE, 
+								'not null' => TRUE,
+								'description'=> "Resource access level"
+							),
+							'location' => array(
+								'type' => 'varchar',
+								//'size' => 'normal',
+								'not null' => TRUE,
+								'length' => '300',
+								'description' => "Resource Location"
+							),
+							'tel_no' => array(
+								'type' => 'int', 
+								'size' => 'normal', 
+								'unsigned' => TRUE, 
+								'not null' => TRUE,
+								'description'=> "Resource Caretaker No"
+							),
+							'primary key' => array('resource_id')
+					),
+					$schema['reservation'] = array(
+						'event_id' => array(
+							'type' => 'serial', 
+							'size' => 'big', 
+							'unsigned' => TRUE, 
+							'not null' => TRUE,
+							'description'=> "Event ID"
+						),
+						'resource_id' => array(
+							'type' => 'serial', 
+							'size' => 'big', 
+							'unsigned' => TRUE, 
+							'not null' => TRUE,
+							'description'=> "Resource ID"
+						),
+						'foreign keys' => array(
+							'event_key' => array(
+								'table' => 'event',
+								'columns' => array('event_id' => 'event_id'),
+							),
+							'resource_key' => array(
+								'table' => 'resource',
+								'columns' => array('resource_id' => 'resource_id'),
+							)
+						),
+						'primary key' => array('event_id', 'resource_id')
+					),
+					$schema['external_user'] = array(
+						'ex_user_id' => array(
+							'type' => 'serial', 
+							'size' => 'big', 
+							'unsigned' => TRUE, 
+							'not null' => FALSE,
+							'description'=> "Externael User ID"
+							),
+						'email' => array(
+							'type' => 'char',
+							//'size' => 'normal',
+							'not null' => TRUE,
+							'length' => '200',
+							'description' => "Email address"
+						), 
+						'tel_no' => array(
+							'type' => 'int', 
+							'size' => 'normal', 
+							'unsigned' => TRUE, 
+							'not null' => TRUE,
+							'description'=> "Resource Caretaker No"
+						),
+						'org_name' => array(
+							'type' => 'varchar',
+							//'size' => 'normal',
+							'not null' => TRUE,
+							'length' => '300',
+							'description' => "organization name"
+						), 
+					)
+				);
+				return $schema;
+			}break;
+			case 'external':{
+				$dbCon = new dbCon;
+				$sql_1 = "CREATE TABLE IF NOT EXISTS external_user(
+					ex_user_id int NOT NULL AUTO_INCREMENT,
+					email char(255),
+					tel_no int,
+					org_name char(255),
+					PRIMARY KEY (ex_user_id)
+				)
+				";
+				$dbCon->setQuery($sql_1);
+				$sql_2 = "CREATE TABLE IF NOT EXISTS events(
+					event_id int NOT NULL AUTO_INCREMENT,
+					uid int(10),
+					ex_user_id int(10),
+					event_name varchar(255) NOT NULL,
+					start_date 	datetime NOT NULL,
+					end_date datetime ,
+					start_time datetime ,			
+					end_time datetime,
+					timestamp varchar(30),
+					note varchar(255),
+					PRIMARY KEY (event_id),
+					FOREIGN KEY (ex_user_id) REFERENCES external_user(ex_user_id)
+				)";
+				$dbCon->setQuery($sql_2);
+				$sql_3 = "CREATE TABLE IF NOT EXISTS resource(
+					resource_id int NOT NULL AUTO_INCREMENT,
+					resource_name char(254) NOT NULL,
+					resource_type int NOT NULL,
+					capacity int,
+					location char(254),
+					tel_no int,
+					admin_id int,
+					PRIMARY KEY (resource_id)
+				)";
+				$dbCon->setQuery($sql_3);
+				$sql_4 = "CREATE TABLE IF NOT EXISTS reservation(
+						event_id int NOT NULL,
+						resource_id int NOT NULL,
+						start_time datetime ,			
+						end_time datetime,
+						PRIMARY KEY (event_id, resource_id),
+						FOREIGN KEY (event_id) REFERENCES events(event_id),
+						FOREIGN KEY (resource_id) REFERENCES resource(resource_id)
+				)";
+				$dbCon->setQuery($sql_4);
+			}break;
+		}
+	}

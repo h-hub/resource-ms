@@ -1,0 +1,1 @@
+Ckeck out test.php others shpuld look like it

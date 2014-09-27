@@ -1,0 +1,5 @@
+; $Id$
+name = rss
+description = This is Resourse Sheduling System Plugin.
+core = 6.x
+package = "Test"
